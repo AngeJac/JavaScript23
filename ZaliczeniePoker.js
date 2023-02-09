@@ -1,28 +1,3 @@
-// // sprawdzenie ręczne (1=spade / 2=heart / 3=club / 4=diamond)
-// // (11=Jack / 12=Queen / 13=King / 14=Ace)
-//
-// ourHand = [{
-//         rank: 6,
-//         suit: 1
-//     },
-//     {
-//         rank: 7,
-//         suit: 1
-//     },
-//     {
-//         rank: 10,
-//         suit: 1
-//     },
-//     {
-//         rank: 8,
-//         suit: 1
-//     },
-//     {
-//         rank: 9,
-//         suit: 1
-//     },
-// ]
-
 // pusta talia kart
 const cardDeck = []
 
