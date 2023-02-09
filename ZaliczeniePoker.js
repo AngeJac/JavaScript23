@@ -1,109 +1,254 @@
-// (color: 1=spade / 2=heart / 3=club / 4=diamond)
-// (value: 11=Jack / 12=Queen / 13=King / 14=Ace)
+// // sprawdzenie ręczne (1=spade / 2=heart / 3=club / 4=diamond)
+// // (11=Jack / 12=Queen / 13=King / 14=Ace)
+//
+// ourHand = [{
+//         rank: 6,
+//         suit: 1
+//     },
+//     {
+//         rank: 7,
+//         suit: 1
+//     },
+//     {
+//         rank: 10,
+//         suit: 1
+//     },
+//     {
+//         rank: 8,
+//         suit: 1
+//     },
+//     {
+//         rank: 9,
+//         suit: 1
+//     },
+// ]
 
-// stworzenia klasy Card
+// pusta talia kart
+const cardDeck = []
+
+// deklaracja klasy Card
 class Card {
-	constructor(color, value) {
-		this.color = color
-		this.value = value
+	constructor(rank, suit) {
+		this.rank = rank
+		this.suit = suit
 	}
-	toString() {
-		return `${this.getFigure()} ${this.getColor()}`
+	changeRank(newRank) {
+		this.rank = newRank
 	}
-	getFigure() {
-		switch (this.value) {
-			case 11:
-				return 'Jack'
-			case 12:
-				return 'Queen'
-			case 13:
-				return 'King'
-			case 14:
-				return 'Ace'
-			default:
-				return this.value
-		}
-	}
-	getColor() {
-		switch (this.color) {
-			case 1:
-				return 'Spade'
-			case 2:
-				return 'Heart'
-			case 3:
-				return 'Club'
-			case 4:
-				return 'Diamond'
-		}
+	changeSuit(newSuit) {
+		this.suit = newSuit
 	}
 }
 
-// funkcja tworząca talię kart - liczbowo
-function createDeck() {
-	const deck = []
-	for (let value = 2; value <= 14; value++) {
-		for (let color = 1; color <= 4; color++) {
-			const card = new Card(color, value)
-			deck.push(card)
+// Tworzenie liczbowej talii kart
+function createCardDeck() {
+	for (let i = 2; i <= 14; i++) {
+		for (let j = 1; j <= 4; j++) {
+			let card = new Card(i, j)
+			cardDeck.push(card)
 		}
 	}
-	return deck
 }
-
-const deck = createDeck()
 
 // losowanie 5 kart
-function cardDraw(cardDeck) {
-	let handCards = []
-	for (i = 0; i <= 4; i++) {
-		let randomCard = cardDeck.splice(Math.random() * cardDeck.length, 1)
-		handCards.push(randomCard[0])
+function drawFiveCards() {
+	let fiveCards = []
+	for (let i = 0; i < 5; i++) {
+		let index = Math.floor(Math.random() * cardDeck.length)
+		let card = cardDeck.splice(index, 1)
+		fiveCards.push(card[0])
 	}
-	return handCards
+	return fiveCards
 }
-// const hand = cardDraw(deck);
 
-const hand = [new Card(1, 14), new Card(1, 13), new Card(1, 12), new Card(1, 11), new Card(1, 10)]
+// pokazanie 5 wylosowanych kart
+const showOurHand = () => ourHand.forEach(card => console.log(card))
 
-// // sprawdzanie układów
-// function findRoyalFlush(ourCards) {
-// 	let isRoyalFlush = false
-// 	let colorCounter = 0
-// 	for (let i = 0; i <= ourCards.length - 1; i++) {
-// 		if (ourCards[i].color === ourCards[i + 1].color) colorCounter++
-// 		else break
-// 	}
-// 	let valueCounter = 0
-// 	for (let j = 0; j <= ourCards.length - 1; j++) {
-// 		if (10 <= ourCards[j].value <= 14) valueCounter++
-// 		else break
-// 	}
-// 	if (colorCounter === 4 && valueCounter === 4) isRoyalFlush = true
-// 	return isRoyalFlush
-// }
-// console.log(findRoyalFlush(hand))
+// sortowanie kart wg figur
+const sortOurHandByRank = () => ourHand.sort((a, b) => a.rank - b.rank)
 
-// sprawdzanie StraightFlush
-function findStraightFlush(ourCards) {
+// deklaracje układów:
+//sprawdzenie pokera
+function straightFlush() {
 	let isStraightFlush = false
-	let colorCounter = 1
-	for (let i = 0; i <= ourCards.length - 2; i++) {
-		if (ourCards[i].color === ourCards[i + 1].color) colorCounter++
-		else break
+	let counter = 0
+	let color = 0
+	for (let i = 0; i < ourHand.length - 1; i++) {
+		if (ourHand[i].rank + 1 === ourHand[i + 1].rank) {
+			counter == counter++
+		} else {
+			break
+		}
 	}
-
-	let valueCounter = 1
-	for (let j = 0; j <= ourCards.length - 2; j++) {
-		if (ourCards[j].value === ourCards[j + 1].value + 1) valueCounter++
-		else break
+	for (let i = 0; i < ourHand.length - 1; i++) {
+		if (ourHand[i].suit === ourHand[i + 1].suit) {
+			color == color++
+		} else {
+			break
+		}
 	}
-
-	if (colorCounter === 5 && valueCounter === 5) isStraightFlush = true
+	if (counter == 4 && color == 4) {
+		isStraightFlush = true
+	}
 	return isStraightFlush
 }
 
-console.log(
-	'Karty::',
-	hand.map(card => card.toString())
-)
-console.log(findStraightFlush(hand))
+//sprawdzenie karety
+function fourOfAKind() {
+	let isFourOfAKind = false
+	let counter = 0
+	for (let i = 0; i < ourHand.length - 1; i++) {
+		if (ourHand[i].rank === ourHand[i + 1].rank) {
+			counter == counter++
+		}
+	}
+	if (counter == 3 && (ourHand[2].rank === ourHand[3].rank) === ourHand[4].rank) {
+		isFourOfAKind = true
+	}
+	return isFourOfAKind
+}
+
+//sprawdzenie fula
+function fullHouse() {
+	let isFullHouse = false
+	let counter = 0
+	for (let i = 0; i < ourHand.length - 1; i++) {
+		if (ourHand[i].rank === ourHand[i + 1].rank) {
+			counter == counter++
+		}
+	}
+	if (counter == 3) {
+		isFullHouse = true
+	}
+	return isFullHouse
+}
+
+// sprawdzenie koloru
+function flush() {
+	let isFlush = false
+	let color = 0
+	for (let i = 0; i < ourHand.length - 1; i++) {
+		if (ourHand[i].suit === ourHand[i + 1].suit) {
+			color == color++
+		} else {
+			break
+		}
+	}
+	if (color == 4) {
+		isFlush = true
+	}
+	return isFlush
+}
+
+// sprawdzenie strita
+function straight() {
+	let isStraight = false
+	let counter = 0
+	for (let i = 0; i < ourHand.length - 1; i++) {
+		if (ourHand[i].rank + 1 === ourHand[i + 1].rank) {
+			counter == counter++
+		} else {
+			break
+		}
+	}
+	if (counter == 4) {
+		isStraight = true
+	}
+	return isStraight
+}
+
+// sprawdzenie trójki
+function threeOfAKind() {
+	let isThreeOfAKind = false
+	let counter = 0
+	for (let i = 0; i < ourHand.length - 2; i++) {
+		if (ourHand[i].rank === ourHand[i + 1].rank && ourHand[i + 1].rank === ourHand[i + 2].rank) {
+			counter == counter++
+		}
+	}
+	if (counter == 1) {
+		isThreeOfAKind = true
+	}
+	return isThreeOfAKind
+}
+
+// sprawdzenie 2 par
+function twoPair() {
+	let isTwoPair = false
+	let counter = 0
+	for (let i = 0; i < ourHand.length - 1; i++) {
+		if (ourHand[i].rank === ourHand[i + 1].rank) counter == counter++
+	}
+	if (counter == 2) {
+		isTwoPair = true
+	}
+	return isTwoPair
+}
+
+// sprawdzenie pary
+function onePair() {
+	let isOnePair = false
+	let counter = 0
+	for (let i = 0; i < ourHand.length - 1; i++) {
+		if (ourHand[i].rank === ourHand[i + 1].rank) counter == counter++
+	}
+	if (counter == 1) {
+		isOnePair = true
+	}
+	return isOnePair
+}
+
+// Przypisanie kartom figur i kolorów
+function changeCardNames() {
+	ourHand.forEach(card => {
+		if (card.suit === 1) {
+			card.changeSuit('spade')
+		} else if (card.suit === 2) {
+			card.changeSuit('heart')
+		} else if (card.suit === 3) {
+			card.changeSuit('club')
+		} else {
+			card.changeSuit('diamond')
+		}
+	})
+	ourHand.forEach(card => {
+		if (card.rank === 14) {
+			card.changeRank('Ace')
+		} else if (card.rank === 11) {
+			card.changeRank('Jack')
+		} else if (card.rank === 12) {
+			card.changeRank('Queen')
+		} else if (card.rank === 13) {
+			card.changeRank('King')
+		}
+	})
+}
+
+// sprawdzenie jaki najwyższy układ mamy na ręku
+function whatIsMyHand() {
+	if (isStraightFlush === true) console.log(`Najwyższy układ na Twojej ręce to: Straight Flush`)
+	else if (isFourOfAKind === true) console.log(`Najwyższy układ na Twojej ręce to: Four of a Kind`)
+	else if (isFullHouse === true) console.log(`Najwyższy układ na Twojej ręce to: Full House`)
+	else if (isFlush === true) console.log(`Najwyższy układ na Twojej ręce to: Flush`)
+	else if (isStraight === true) console.log(`Najwyższy układ na Twojej ręce to: Straight`)
+	else if (isThreeOfAKind === true) console.log(`Najwyższy układ na Twojej ręce to: Three of a Kind`)
+	else if (isTwoPair === true) console.log(`Najwyższy układ na Twojej ręce to: Two Pair`)
+	else if (isOnePair === true) console.log(`Najwyższy układ na Twojej ręce to: One Pair`)
+	else console.log(`Najwyższy układ na Twojej ręce to: High Card`)
+}
+
+// wywołanie całości
+createCardDeck()
+ourHand = drawFiveCards()
+sortOurHandByRank()
+const isStraightFlush = straightFlush()
+const isFourOfAKind = fourOfAKind()
+const isFullHouse = fullHouse()
+const isFlush = flush()
+const isStraight = straight()
+const isThreeOfAKind = threeOfAKind()
+const isTwoPair = twoPair()
+const isOnePair = onePair()
+whatIsMyHand()
+changeCardNames()
+showOurHand()
